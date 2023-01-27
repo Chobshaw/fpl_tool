@@ -1,16 +1,16 @@
 from datetime import datetime
+from typing import Optional
 
 from bson import ObjectId
-from pandas._libs import NaTType
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class FixtureHistoryItem(BaseModel):
-    id: ObjectId = Field(None, alias='_id')
+    _id: Optional[ObjectId] = None
     code: int
     game_week: float
     season_fixture_id: int
-    timestamp: datetime | NaTType
+    timestamp: datetime
     team_h: int
     team_a: int
     team_h_score: int | float

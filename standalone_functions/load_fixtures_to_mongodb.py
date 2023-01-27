@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from bson import ObjectId
 from dependency_injector.wiring import Provide, inject
 
 from containers.standalone_containers import Container
@@ -24,7 +23,6 @@ def load_fixtures_to_mongodb(fixture_history_collection: MongodbHelper = Provide
     fixture_history_df['timestamp'] = fixture_history_df['timestamp'].map(
         lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%SZ')
     )
-    # fixture_history_df.insert(0, '_id', [ObjectId() for _ in range(len(fixture_history_df))])
     fixture_history_items = FixtureHistoryItems(items=fixture_history_df.to_dict('records'))
     fixture_history_collection.batch_replace_items(
         items=fixture_history_items.dict()['items'],
