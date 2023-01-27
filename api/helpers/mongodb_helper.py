@@ -20,6 +20,14 @@ class MongodbHelper:
                 upsert=True
             )
 
+    def batch_update_items(self, items: list[dict], filter_field: str, update_field: str) -> None:
+        for item in items:
+            self.collection.update_one(
+                filter={filter_field: item[filter_field]},
+                update={'$set': {update_field: item[update_field]}},
+                upsert=True
+            )
+
     def batch_replace_items(self, items: list[dict], filter_field: str) -> None:
         for item in items:
             self.collection.replace_one(

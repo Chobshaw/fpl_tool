@@ -2,11 +2,11 @@ from dependency_injector import containers, providers
 from pymongo import MongoClient
 
 from helpers.mongodb_helper import MongodbHelper
-from models.settings_model import Settings
+from models.settings_model import StandaloneSettings
 
 
-class Container(containers.DeclarativeContainer):
-    config = providers.Configuration(pydantic_settings=[Settings()])
+class StandaloneContainer(containers.DeclarativeContainer):
+    config = providers.Configuration(pydantic_settings=[StandaloneSettings()])
 
     # Gateways
     mongo_client = providers.Singleton(

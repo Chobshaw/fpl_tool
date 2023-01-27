@@ -8,6 +8,7 @@ from pydantic import BaseModel
 class FixtureHistoryItem(BaseModel):
     _id: Optional[ObjectId] = None
     code: int
+    season: str
     game_week: float
     season_fixture_id: int
     timestamp: datetime
