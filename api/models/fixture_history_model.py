@@ -1,25 +1,19 @@
 from datetime import datetime
-from typing import Optional
 
-from bson import ObjectId
 from pydantic import BaseModel
 
+from models.mongodb_base_model import MongodbBaseModel
 
-class FixtureHistoryItem(BaseModel):
-    _id: Optional[ObjectId] = None
-    code: int
+
+class FixtureHistoryItem(MongodbBaseModel):
+    code: str
+    competition: str
     season: str
-    game_week: float
-    season_fixture_id: int
-    timestamp: datetime
-    team_h: int
-    team_a: int
-    team_h_score: int | float
-    team_a_score: int | float
-
-    class Config:
-        arbitrary_types_allowed = True
-        allow_population_by_field_name = True
+    date: datetime
+    team_home: str
+    team_away: str
+    goals_home: int
+    goals_away: int
 
 
 class FixtureHistoryItems(BaseModel):

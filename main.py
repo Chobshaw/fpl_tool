@@ -1,16 +1,25 @@
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import inject, Provide
 
-from containers.containers import Container
-from helpers.mongodb_helper import MongodbHelper
+from containers.standalone_containers import StandaloneContainer
+from services.fixture_data_loader_service import FixtureDataLoaderService
 
 
 @inject
-def main(airbnb_collection: MongodbHelper = Provide[Container.airbnb_collection]):
-    for val in airbnb_collection.collection.find({'property_type': 'House'})[:3]:
-        print(val)
+def main(
+        from_timestamp: int,
+        to_timestamp: int,
+        competitions: list[str],
+        data_loader_service: FixtureDataLoaderService = Provide[StandaloneContainer.data_loader_service]
+) -> None:
+    data_loader_service.load_historical_fixture_data_to_mongodb(from_year=2010, to_year=2023, competitions=competitions)
 
 
-container = Container()
+container = StandaloneContainer()
 container.init_resources()
 container.wire(modules=[__name__])
-main()
+event = {
+    'from_timestamp': 2010,
+    'to_timestamp': 2022,
+    'competitions': ['premier_league', 'championship']
+}
+main(**event)

@@ -6,6 +6,9 @@ class MongodbHelper:
         self.database = client[database_name]
         self.collection = self.database[collection_name]
 
+    def query_all_items(self) -> dict:
+        return self.collection.find({})[0]
+
     def put_item(self, item: dict) -> None:
         self.collection.insert_one(item)
 
@@ -35,3 +38,8 @@ class MongodbHelper:
                 replacement=item,
                 upsert=True
             )
+
+    def delete_all_items(self) -> None:
+        self.collection.delete_many(
+            filter={}
+        )
