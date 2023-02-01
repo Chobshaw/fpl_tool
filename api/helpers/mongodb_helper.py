@@ -1,5 +1,7 @@
 from pymongo import MongoClient
 
+from models.mongodb_query_model import MongodbQueryModel
+
 
 class MongodbHelper:
     def __init__(self, client: MongoClient, database_name: str, collection_name: str) -> None:
@@ -8,6 +10,16 @@ class MongodbHelper:
 
     def query_all_items(self) -> dict:
         return self.collection.find({})[0]
+
+    def query_items_between(self, mongodb_query_model: MongodbQueryModel):
+        index_key = mongodb_query_model.index_key
+        response = self.collection.find({
+            index_key.name: {
+                '$gte': index_key.value,
+                '$lt': index_key.aux_value
+            }
+        })
+        return response
 
     def put_item(self, item: dict) -> None:
         self.collection.insert_one(item)
