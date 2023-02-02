@@ -41,7 +41,7 @@ class StandaloneContainer(containers.DeclarativeContainer):
     data_loader_service = providers.Factory(
         FixtureDataLoaderService,
         mongodb_helper=fixture_history_mongodb_helper,
-        parameter_store_helper=parameter_store_helper
+        constants=parameter_store_helper.provided.constants.fixture_data_loader_constants
     )
 
     team_elo_service = providers.Factory(

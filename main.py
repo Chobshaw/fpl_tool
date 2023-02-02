@@ -15,8 +15,8 @@ def main(
         data_loader_service: FixtureDataLoaderService = Provide[StandaloneContainer.data_loader_service],
         team_elo_service: TeamEloService = Provide[StandaloneContainer.team_elo_service]
 ) -> None:
-    # data_loader_service.load_historical_fixture_data_to_mongodb(from_year=2010, to_year=2023, competitions=competitions)
-    team_elo_service.calculate_elo_data(datetime(2010, 1, 1), datetime(2011, 1, 1))
+    data_loader_service.load_historical_fixture_data_to_mongodb(from_year=2010, to_year=2023, competitions=competitions)
+    # team_elo_service.calculate_elo_data(datetime(2010, 1, 1), datetime(2011, 1, 1))
 
 
 container = StandaloneContainer()

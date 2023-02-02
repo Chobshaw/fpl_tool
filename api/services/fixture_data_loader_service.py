@@ -1,20 +1,19 @@
 import itertools
 import posixpath
-from datetime import datetime
 
 import pandas as pd
 
 from helpers.mongodb_helper import MongodbHelper
-from helpers.parameter_store_helper import ParameterStoreHelper
+from models.constants_model import FixtureDataLoaderConstants
 from models.fixture_history_model import FixtureHistoryItems
 from utils.converters import written_to_snake, str_to_hex_id, fixture_date_to_datetime
 from utils.data_loaders import load_csv_to_df_from_url
 
 
 class FixtureDataLoaderService:
-    def __init__(self, mongodb_helper: MongodbHelper, parameter_store_helper: ParameterStoreHelper) -> None:
+    def __init__(self, mongodb_helper: MongodbHelper, constants: FixtureDataLoaderConstants) -> None:
         self.mongodb_helper = mongodb_helper
-        self.constants = parameter_store_helper.constants.fixture_data_loader_constants
+        self.constants = constants
 
     def format_fixture_data(self, df: pd.DataFrame, season: int) -> pd.DataFrame:
         df = df[self.constants.column_name_dict.keys()]
