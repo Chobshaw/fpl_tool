@@ -3,6 +3,10 @@ from pydantic import BaseModel
 from models.mongodb_base_model import MongodbBaseModel
 
 
+class EloServiceConstants(BaseModel):
+    pass
+
+
 class FixtureDataLoaderConstants(BaseModel):
     competition_codes_dict: dict[str, str]
     fixture_data_url: str

@@ -19,7 +19,7 @@ class MongodbHelper:
                 '$lt': index_key.aux_value
             }
         })
-        return response
+        return {'items': [item for item in response]}
 
     def put_item(self, item: dict) -> None:
         self.collection.insert_one(item)

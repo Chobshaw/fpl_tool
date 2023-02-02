@@ -6,7 +6,9 @@ from pydantic import BaseModel
 from models.mongodb_base_model import MongodbBaseModel
 
 
-class MatchDay(BaseModel):
+class TeamInstance(BaseModel):
+    team_name: str
+    competition: str
     date: datetime
     elo: float
     # elo_attack: float
@@ -21,5 +23,5 @@ class SquadUpdate(BaseModel):
 class TeamModel(MongodbBaseModel):
     name: str
     league: Literal['premier_league', 'championship']
-    history: list[MatchDay]
+    history: list[TeamInstance]
     # squad_history: list[SquadUpdate]

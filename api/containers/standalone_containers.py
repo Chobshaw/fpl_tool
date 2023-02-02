@@ -5,6 +5,7 @@ from helpers.mongodb_helper import MongodbHelper
 from helpers.parameter_store_helper import ParameterStoreHelper
 from models.settings_model import StandaloneSettings
 from services.fixture_data_loader_service import FixtureDataLoaderService
+from services.team_elo_service import TeamEloService
 
 
 class StandaloneContainer(containers.DeclarativeContainer):
@@ -41,4 +42,9 @@ class StandaloneContainer(containers.DeclarativeContainer):
         FixtureDataLoaderService,
         mongodb_helper=fixture_history_mongodb_helper,
         parameter_store_helper=parameter_store_helper
+    )
+
+    team_elo_service = providers.Factory(
+        TeamEloService,
+        mongodb_helper=fixture_history_mongodb_helper
     )
