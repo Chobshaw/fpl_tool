@@ -24,6 +24,10 @@ class FixtureDataLoaderService:
         )
         df['date'] = df['date'].map(fixture_date_to_datetime)
         df[['team_home', 'team_away']] = df[['team_home', 'team_away']].applymap(written_to_snake)
+        df['result_home'] = df.apply(
+            lambda x: int(x['goals_home'] > x['goals_away']) + 0.5 * int(x['goals_home'] == x['goals_away']),
+            axis=1
+        )
         df.insert(0, 'season', f'{season}-{season + 1}')
         df['code'] = df.apply(lambda row: str_to_hex_id(f'{row.date}-{row.team_home}-{row.team_away}'), axis=1)
         return df
@@ -39,6 +43,7 @@ class FixtureDataLoaderService:
             fixtures_df = load_csv_to_df_from_url(season_fixture_data_url)
             fixtures_df = self.format_fixture_data(fixtures_df, season)
             fixtures = FixtureList(items=fixtures_df.to_dict('records'))
-            self.fixtures_collection.batch_put_items(
-                items=fixtures.dict()['items']
+            self.fixtures_collection.batch_replace_items(
+                items=fixtures.dict()['items'],
+                filter_field='code'
             )
