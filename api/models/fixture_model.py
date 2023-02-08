@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from models.mongodb_base_model import MongodbBaseModel
 
 
-class FixtureHistoryItem(MongodbBaseModel):
+class Fixture(MongodbBaseModel):
     code: str
     competition: str
     season: str
@@ -16,5 +16,5 @@ class FixtureHistoryItem(MongodbBaseModel):
     goals_away: int
 
 
-class FixtureHistoryItems(BaseModel):
-    items: list[FixtureHistoryItem]
+class FixtureList(BaseModel):
+    items: list[Fixture]

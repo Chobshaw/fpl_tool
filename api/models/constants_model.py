@@ -3,8 +3,8 @@ from pydantic import BaseModel
 from models.mongodb_base_model import MongodbBaseModel
 
 
-class EloServiceConstants(BaseModel):
-    pass
+class TeamRatingServiceConstants(BaseModel):
+    default_rating_dict: dict[str, int]
 
 
 class FixtureDataLoaderConstants(BaseModel):
@@ -15,3 +15,4 @@ class FixtureDataLoaderConstants(BaseModel):
 
 class Constants(MongodbBaseModel):
     fixture_data_loader_constants: FixtureDataLoaderConstants
+    team_rating_service_constants: TeamRatingServiceConstants

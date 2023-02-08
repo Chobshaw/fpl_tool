@@ -1,13 +1,13 @@
 from datetime import datetime
-from typing import Literal
+from typing import DefaultDict
 
 from pydantic import BaseModel
 
 from models.mongodb_base_model import MongodbBaseModel
 
 
-class TeamInstance(BaseModel):
-    team_name: str
+class TeamInstance(MongodbBaseModel):
+    team: str
     competition: str
     date: datetime
     elo: float
@@ -15,13 +15,9 @@ class TeamInstance(BaseModel):
     # elo_defense: float
 
 
-class SquadUpdate(BaseModel):
-    date: datetime
-    players: list[str]
+TeamDict = DefaultDict[str, list[TeamInstance]]
 
 
-class TeamModel(MongodbBaseModel):
+class Team(BaseModel):
     name: str
-    league: Literal['premier_league', 'championship']
-    history: list[TeamInstance]
-    # squad_history: list[SquadUpdate]
+    team_instances: list[TeamInstance]

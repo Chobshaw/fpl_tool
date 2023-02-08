@@ -1,13 +1,14 @@
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class TableKey(BaseModel):
+class IndexKey(BaseModel):
     name: str
     value: Any
     aux_value: Any = None
 
 
 class MongodbQueryModel(BaseModel):
-    index_key: TableKey
+    partition_key: IndexKey = None
+    sort_key: IndexKey = None

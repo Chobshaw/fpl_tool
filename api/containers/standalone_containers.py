@@ -4,8 +4,9 @@ from pymongo import MongoClient
 from helpers.mongodb_helper import MongodbHelper
 from helpers.parameter_store_helper import ParameterStoreHelper
 from models.settings_model import StandaloneSettings
+from rating_systems.rating_models import EloModel
 from services.fixture_data_loader_service import FixtureDataLoaderService
-from services.team_elo_service import TeamEloService
+from services.team_rating_service import TeamRatingService
 
 
 class StandaloneContainer(containers.DeclarativeContainer):
@@ -17,34 +18,50 @@ class StandaloneContainer(containers.DeclarativeContainer):
         config.MONGODB_CONNECTION_STRING
     )
 
-    # Databases
-    parameter_store_mongodb_helper = providers.Singleton(
+    # Collections
+    parameter_store_collection = providers.Singleton(
         MongodbHelper,
         client=mongo_client,
         database_name=config.PARAMETER_STORE_DATABASE_NAME,
         collection_name=config.PARAMETERS_COLLECTION_NAME
     )
 
-    parameter_store_helper = providers.Singleton(
-        ParameterStoreHelper,
-        mongodb_helper=parameter_store_mongodb_helper
-    )
-
-    fixture_history_mongodb_helper = providers.Singleton(
+    fixtures_collection = providers.Singleton(
         MongodbHelper,
         client=mongo_client,
         database_name=config.TEAM_DATA_DATABASE_NAME,
-        collection_name=config.FIXTURE_HISTORY_COLLECTION_NAME
+        collection_name=config.FIXTURES_COLLECTION_NAME
+    )
+
+    team_instances_collection = providers.Singleton(
+        MongodbHelper,
+        client=mongo_client,
+        database_name=config.TEAM_DATA_DATABASE_NAME,
+        collection_name=config.TEAM_INSTANCES_COLLECTION_NAME
+    )
+
+    # Parameter store
+    parameter_store_helper = providers.Singleton(
+        ParameterStoreHelper,
+        mongodb_helper=parameter_store_collection
+    )
+
+    # Tools
+    elo_model = providers.Factory(
+        EloModel
     )
 
     # Services
     data_loader_service = providers.Factory(
         FixtureDataLoaderService,
-        mongodb_helper=fixture_history_mongodb_helper,
+        fixtures_collection=fixtures_collection,
         constants=parameter_store_helper.provided.constants.fixture_data_loader_constants
     )
 
-    team_elo_service = providers.Factory(
-        TeamEloService,
-        mongodb_helper=fixture_history_mongodb_helper
+    team_rating_service = providers.Factory(
+        TeamRatingService,
+        fixtures_collection=fixtures_collection,
+        team_instances_collection=team_instances_collection,
+        constants=parameter_store_helper.provided.constants.team_rating_service_constants,
+        rater=elo_model
     )

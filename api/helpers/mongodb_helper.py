@@ -1,3 +1,5 @@
+from typing import Any
+
 from pymongo import MongoClient
 
 from models.mongodb_query_model import MongodbQueryModel
@@ -8,18 +10,26 @@ class MongodbHelper:
         self.database = client[database_name]
         self.collection = self.database[collection_name]
 
-    def query_all_items(self) -> dict:
+    def query_all_items(self) -> dict[Any, Any]:
         return self.collection.find({})[0]
 
-    def query_items_between(self, mongodb_query_model: MongodbQueryModel):
-        index_key = mongodb_query_model.index_key
+    def query_items_between(self, mongodb_query_model: MongodbQueryModel) -> dict[str, Any]:
+        sort_key = mongodb_query_model.sort_key
         response = self.collection.find({
-            index_key.name: {
-                '$gte': index_key.value,
-                '$lt': index_key.aux_value
+            sort_key.name: {
+                '$gte': sort_key.value,
+                '$lt': sort_key.aux_value
             }
         })
         return {'items': [item for item in response]}
+
+    def query_most_recent_item(self, mongodb_query_model: MongodbQueryModel) -> Any:
+        partition_key, sort_key = mongodb_query_model.partition_key, mongodb_query_model.sort_key
+        response = self.collection.find({
+            partition_key.name: partition_key.value,
+            sort_key.name: {'$lte': sort_key.value}
+        }).sort({sort_key.name: -1}).limit(1)
+        return response[0]
 
     def put_item(self, item: dict) -> None:
         self.collection.insert_one(item)
