@@ -9,8 +9,8 @@ class EloCalculator:
 
     def _get_prediction_error(self, elo_home: float, elo_away: float, score_home: int, score_away: int) -> float:
         actual_score = int(score_home > score_away) + 0.5 * int(score_home == score_away)
-        expected_score = self.calculate_expected_score(elo_home, elo_away)
-        return actual_score - expected_score
+        self.expected_score = self.calculate_expected_score(elo_home, elo_away)
+        return actual_score - self.expected_score
 
     def calculate_new_elos(
             self, elo_home: float, elo_away: float, score_home: int, score_away: int

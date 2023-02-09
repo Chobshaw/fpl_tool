@@ -15,8 +15,8 @@ def main(
         data_loader_service: FixtureDataLoaderService = Provide[StandaloneContainer.data_loader_service],
         team_elo_service: TeamRatingService = Provide[StandaloneContainer.team_rating_service]
 ) -> None:
-    data_loader_service.load_fixture_data_to_mongodb(from_year=2010, to_year=2022, competitions=competitions)
-    # team_elo_service.get_team_ratings(datetime(2010, 1, 1), datetime(2023, 2, 3))
+    # data_loader_service.load_fixture_data_to_mongodb(from_year=2010, to_year=2022, competitions=competitions)
+    team_elo_service.get_team_ratings(datetime(2010, 1, 1), datetime(2023, 2, 10))
 
 
 container = StandaloneContainer()

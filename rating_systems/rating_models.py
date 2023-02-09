@@ -68,7 +68,7 @@ class EloModel:
 
     def rate(self, fixtures_df: pd.DataFrame, team_dict: TeamDict, reverse_rate: bool = False) -> None:
         self.team_dict = team_dict
-        fixtures_df['prediction_error'] = 0
+        fixtures_df['expected_result_home'] = 0
         elo_calculator = EloCalculator(k_factor=64)
         current_season = fixtures_df.loc[0, 'season']
         if reverse_rate:
@@ -93,7 +93,7 @@ class EloModel:
                 score_home=fixture.goals_home,
                 score_away=fixture.goals_away
             )
-            fixtures_df.loc[fixture.Index, 'prediction_error'] = elo_calculator.prediction_error
+            fixtures_df.loc[fixture.Index, 'expected_result_home'] = elo_calculator.expected_score
             self.team_dict[fixture.team_home].append(self._get_new_team_instance(fixture, 'home', elo_home_new))
             self.team_dict[fixture.team_away].append(self._get_new_team_instance(fixture, 'away', elo_away_new))
         for team, team_instances in self.team_dict.items():
@@ -102,6 +102,11 @@ class EloModel:
                 if team_instances[i + 1].date <= team_instances[i].date:
                     start_index = i + 1
             self.team_dict[team] = team_instances[start_index:]
+        pass
 
-    def score(self, fixtures_df: pd.DataFrame, team_dict: TeamDict, reverse_rate: bool = False):
+    def score(self, fixtures_df: pd.DataFrame, team_dict: TeamDict, reverse_rate: bool = False) -> Scores:
         self.rate(fixtures_df, team_dict, reverse_rate)
+        mae, mse = fixtures_df.apply(lambda x: x['result_home'] - x['expected_result_home'], axis=1).agg(
+            [lambda x: sum(abs(x)) / len(x), lambda x: sum(x ** 2) / len(x)]
+        )
+        return Scores(mean_absolute_error=mae, mean_squared_error=mse)
