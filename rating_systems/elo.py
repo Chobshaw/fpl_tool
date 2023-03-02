@@ -1,3 +1,6 @@
+import math
+
+
 class EloCalculator:
     def __init__(self, k_factor: int = 32, constant: int = 400, ) -> None:
         self.k_factor = k_factor
@@ -17,5 +20,7 @@ class EloCalculator:
             self, elo_home: float, elo_away: float, score_home: int, score_away: int
     ) -> tuple[float, float]:
         self.prediction_error = self._get_prediction_error(elo_home, elo_away, score_home, score_away)
-        elo_change = self.k_factor * self.prediction_error
+        # score_difference_factor = abs(score_home - score_away) ** 1/2
+        score_difference_factor = math.log10(1 + abs(score_home - score_away)) / math.log10(2)
+        elo_change = self.k_factor * score_difference_factor * self.prediction_error
         return elo_home + elo_change, elo_away - elo_change

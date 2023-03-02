@@ -70,7 +70,7 @@ class EloModel:
     @staticmethod
     def _get_scores(fixtures_df: pd.DataFrame, no_of_years: Optional[int] = None) -> Scores:
         if no_of_years is None:
-            start_date = datetime(year=MINYEAR, month=1, day=1)
+            start_date = datetime(year=2000, month=1, day=1)
         else:
             start_date = fixtures_df.date.iloc[-1] - timedelta(days=365 * no_of_years)
         mae, mse = fixtures_df[fixtures_df.date >= start_date].apply(
@@ -120,4 +120,4 @@ class EloModel:
                 if team_instances[i + 1].date <= team_instances[i].date:
                     start_index = i + 1
             self.team_dict[team] = team_instances[start_index:]
-        return self._get_scores(fixtures_df, no_of_years=5)
+        return self._get_scores(fixtures_df)
