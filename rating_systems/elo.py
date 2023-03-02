@@ -2,6 +2,7 @@ class EloCalculator:
     def __init__(self, k_factor: int = 32, constant: int = 400, ) -> None:
         self.k_factor = k_factor
         self.constant = constant
+        self.expected_score = None
         self.prediction_error = None
 
     def calculate_expected_score(self, elo_home: float, elo_away: float):

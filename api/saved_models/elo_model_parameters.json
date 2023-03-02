@@ -1,6 +1,10 @@
 {
   "default_ratings_dict": {
-    "premier_league": 2500,
-    "championship": 2300
-  }
+    "premier_league": 2550,
+    "championship": 2220
+  },
+  "k_factor": 32,
+  "elo_constant": 400,
+  "k_factor_limits": [8, 64],
+  "elo_constant_limits": [200, 1000]
 }

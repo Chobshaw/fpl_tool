@@ -54,5 +54,5 @@ class TeamRatingService:
         fixtures_df = self._get_fixture_data(from_timestamp, to_timestamp)
         team_names = list(set(fixtures_df['team_home'].unique()) | set(fixtures_df['team_away'].unique()))
         teams = self._get_teams(team_names=team_names, from_timestamp=from_timestamp)
-        scores = self.rater.score(fixtures_df=fixtures_df, team_dict=teams, reverse_rate=True)
+        scores = self.rater.rate(fixtures_df=fixtures_df, team_dict=teams, reverse_rate=True)
         pass
