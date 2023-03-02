@@ -1,3 +1,4 @@
+from datetime import datetime, MINYEAR, timedelta
 from itertools import chain, product
 from pathlib import Path
 from typing import Optional, Protocol, NamedTuple, Literal
@@ -43,36 +44,7 @@ class EloModel:
 
     def fit(self, fixtures_df: pd.DataFrame, team_dict: dict[str, list[TeamInstance]]):
         k_min, k_max = self.parameters.k_factor_limits
-        constant_min, constant_max = self.parameters.elo_constant_limits
-        while k_min < k_max and constant_min < constant_max:
-            k_mid = (k_min + k_max + 1) >> 1
-            constant_mid = (constant_min + constant_max + 1) >> 1
-            k_sectors = [
-                BinarySearchSector(type='left', min=k_min, max=k_mid),
-                BinarySearchSector(type='right', min=k_mid, max=k_max)
-            ]
-            constant_sectors = [
-                BinarySearchSector(type='left', min=constant_min, max=constant_mid),
-                BinarySearchSector(type='right', min=constant_mid, max=constant_max)
-            ]
-            k_best, constant_best, score_best = k_mid, constant_mid, np.inf
-            for k_sector, constant_sector in product(k_sectors, constant_sectors):
-                k_factor = (k_sector.min + k_sector.max) >> 1
-                constant = (constant_sector.min + constant_sector.max) >> 1
-                self.elo_calculator = EloCalculator(k_factor, constant)
-                scores = self.rate(fixtures_df, team_dict, reverse_rate=True)
-                if scores.mean_absolute_error < score_best:
-                    k_best = k_sector
-                    constant_best = constant_sector
-                    score_best = scores.mean_absolute_error
-            if k_best.type == 'left':
-                k_max = k_mid
-            else:
-                k_min = k_mid
-            if constant_best.type == 'left':
-                constant_max = constant_mid
-            else:
-                constant_min = constant_mid
+        return
 
     def _get_current_elo(self, team: str, competition: str) -> float:
         if team in self.promoted_teams:
@@ -96,8 +68,14 @@ class EloModel:
         )
 
     @staticmethod
-    def _get_scores(fixtures_df: pd.DataFrame) -> Scores:
-        mae, mse = fixtures_df.apply(lambda x: x['result_home'] - x['expected_result_home'], axis=1).agg(
+    def _get_scores(fixtures_df: pd.DataFrame, no_of_years: Optional[int] = None) -> Scores:
+        if no_of_years is None:
+            start_date = datetime(year=MINYEAR, month=1, day=1)
+        else:
+            start_date = fixtures_df.date.iloc[-1] - timedelta(days=365 * no_of_years)
+        mae, mse = fixtures_df[fixtures_df.date >= start_date].apply(
+            lambda x: x['result_home'] - x['expected_result_home'], axis=1
+        ).agg(
             [lambda x: sum(abs(x)) / len(x), lambda x: sum(x ** 2) / len(x)]
         )
         return Scores(mean_absolute_error=mae, mean_squared_error=mse)
@@ -142,4 +120,4 @@ class EloModel:
                 if team_instances[i + 1].date <= team_instances[i].date:
                     start_index = i + 1
             self.team_dict[team] = team_instances[start_index:]
-        return self._get_scores(fixtures_df)
+        return self._get_scores(fixtures_df, no_of_years=5)
