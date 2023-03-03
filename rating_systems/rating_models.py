@@ -11,12 +11,6 @@ from models.team_model import TeamInstance, TeamDict
 from rating_systems.elo import EloCalculator
 
 
-class BinarySearchSector(NamedTuple):
-    type: Literal['left', 'right']
-    min: int
-    max: int
-
-
 class Scores(NamedTuple):
     mean_absolute_error: float
     mean_squared_error: float
@@ -38,7 +32,12 @@ class EloModel:
             saved_model_path = Path(__file__).parents[1] / 'api\\saved_models\\elo_model_parameters.json'
         self.parameters = EloModelParameters.parse_file(saved_model_path)
         self.team_dict: Optional[TeamDict] = None
-        self.elo_calculator = EloCalculator(k_factor=self.parameters.k_factor, constant=self.parameters.elo_constant)
+        self.elo_calculator = EloCalculator(
+            k_factor=self.parameters.k_factor,
+            constant=self.parameters.elo_constant,
+            home_advantage=self.parameters.home_advantage,
+            ha_evolution_rate=self.parameters.ha_evolution_rate
+        )
         self.promoted_teams = set()
         self.promoted_team_elo = self.parameters.default_ratings_dict['championship']
 

@@ -5,6 +5,8 @@
   },
   "k_factor": 20,
   "elo_constant": 400,
+  "home_advantage": 67,
+  "ha_evolution_rate": 0.075,
   "k_factor_limits": [8, 64],
   "elo_constant_limits": [200, 1000]
 }
